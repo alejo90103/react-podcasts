@@ -4,12 +4,12 @@ import ThemeProvider from 'react-bootstrap/ThemeProvider';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import './App.css';
-import Layout from '/components/layout/Layout';
-import { publicRoutes } from "/routes/app/routes";
+import Layout from './components/layout/Layout';
+import { publicRoutes } from "./routes/app/routes";
 
 // PODCASTS
-// import Podcasts from '../components/podcasts/Podcasts';
-// import PodcastDetail from '../components/podcasts/PodcastDetail';
+// import Podcasts from './components/podcasts/Podcasts';
+// import PodcastDetail from './components/podcasts/PodcastDetail';
 
 function App() {
   return (

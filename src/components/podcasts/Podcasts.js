@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Card, Row, Col, Image, Form } from 'react-bootstrap';
 
 import { PODCAST } from '../../routes/app/paths';
+import { PODCAST_API_ALL } from '../../routes/api/paths';
 
 const Podcasts = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Podcasts = () => {
   const [count, setCount] = useState(0);
 
   const getPodcasts = () => {
-    fetch("https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json")
+    fetch(PODCAST_API_ALL)
       .then((res) => res.json())
       .then((data) => {
         const podcasts = data.feed.entry;
@@ -34,7 +35,6 @@ const Podcasts = () => {
       // Fetch the list from the external service again
       getPodcasts();
     }
-    
   }, []);
 
   const handleSearch = (e) => {
@@ -75,21 +75,12 @@ const Podcasts = () => {
             return (
               <Col key={i} className='p-3 my-4'>
                 <Card
-                  style={{ minWidth: "18rem", cursor: "pointer" }}
-                  className="mb-2 shadow bg-white rounded text-center border-0"
+                  style={{ minWidth: "18rem" }}
+                  className="mb-2 shadow bg-white rounded text-center border-0 cursor-pointer"
                   onClick={() => hadleDetail(e)}
                 >
-                  <div style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: -60
-                  }}>
-                    <Image style={{maxHeight: 130}} roundedCircle src={e["im:image"].length > 0 ? e["im:image"][e["im:image"].length - 1].label : "" } />
+                  <div className="image-postcast">
+                    <Image roundedCircle src={e["im:image"].length > 0 ? e["im:image"][e["im:image"].length - 1].label : "" } />
                   </div>
                   <Card.Body style={{ marginTop: 60 }}>
                     <Card.Title>{e["im:name"].label}</Card.Title>
