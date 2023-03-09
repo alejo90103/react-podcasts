@@ -3,7 +3,7 @@
   <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/React.svg/1200px-React.svg.png" alt="Logo" width="80" height="80">
   </a>
-  https://user-images.githubusercontent.com/39777010/224185810-bd5a79eb-ebde-441d-a221-3ae6dea65691.mov
+  <video src="https://user-images.githubusercontent.com/39777010/224185810-bd5a79eb-ebde-441d-a221-3ae6dea65691.mov" />
 </div>
 
 ## Sobre el proyecto
