@@ -7,10 +7,13 @@ import Moment from 'react-moment';
 import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_DETAIL } from '../../routes/api/paths';
 import PodcastCard from './PodcastCard';
+import useLoadingContext from '../../hooks/useLoadingContext';
 
 const PodcastDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { setLoading } = useLoadingContext();
+
   const [podcast, setPodcast] = useState(null);
   const [episodes, setEpisodes] = useState(null);
   
@@ -28,6 +31,7 @@ const PodcastDetail = () => {
             setEpisodes(episodes);
             const currentDate = new Date().getTime();
             localStorage.setItem(`data${podcastId}`, JSON.stringify({ episodes, lastRequestDate: currentDate }));
+            setLoading(false);
           });
       });
   }
@@ -41,14 +45,20 @@ const PodcastDetail = () => {
       if (data && (new Date().getTime() - data.lastRequestDate) < (24 * 60 * 60 * 1000)) {
         // Use the list stored in the local storage
         setEpisodes(data.episodes);
+        setLoading(false);
+        
       } else {
         // Fetch the list from the external service again
-        getPodcastDetail(podcast.id.attributes["im:id"]);
+        // getPodcastDetail(podcast.id.attributes["im:id"]);
+        setTimeout(() => {
+          getPodcastDetail(podcast.id.attributes["im:id"]);
+        }, 1000);
       }
     }
   }, []);
 
   const handleEpisodeDetail = (episode) => {
+    setLoading(true);
     navigate(`${PODCAST}/${podcast.id.attributes["im:id"]}/episode/${episode.guid}`, {
       state: { 
         podcast,

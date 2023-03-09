@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Container, Card, Row, Col, Image, Form } from 'react-bootstrap';
+import { Container, Card, Row, Col, Image, Form, Badge } from 'react-bootstrap';
 
 import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_ALL } from '../../routes/api/paths';
+import useLoadingContext from '../../hooks/useLoadingContext';
 
 const Podcasts = () => {
   const navigate = useNavigate();
+  const { setLoading } = useLoadingContext();
   const [podcasts, setPodcasts] = useState(null);
   const [originalPodcasts, setOriginalPodcasts] = useState(null);
   const [count, setCount] = useState(0);
@@ -21,6 +23,7 @@ const Podcasts = () => {
         setCount(podcasts.length)
         const currentDate = new Date().getTime();
         localStorage.setItem('listData', JSON.stringify({ podcasts, lastRequestDate: currentDate }));
+        setLoading(false);
       });
   }
 
@@ -31,6 +34,7 @@ const Podcasts = () => {
       setPodcasts(listData.podcasts);
       setOriginalPodcasts(listData.podcasts);
       setCount(listData.podcasts.length)
+      setLoading(false);
     } else {
       // Fetch the list from the external service again
       getPodcasts();
@@ -45,9 +49,11 @@ const Podcasts = () => {
       }
     });
     setPodcasts(filtered);
+    setCount(filtered.length);
   } 
 
   const hadleDetail = (e) => {
+    setLoading(true);
     navigate(`${PODCAST}/${e.id.attributes["im:id"]}`, {
       state: { podcast: e }
     });
@@ -57,7 +63,7 @@ const Podcasts = () => {
     <Container>
       <Row className="mt-2">
         <Col className='p-3 my-4 d-flex justify-content-end'>
-          <span className="badge badge-pill bg-info text-white align-self-center mx-2" style={{ height: "fit-content" }}>{count}</span>
+          <h3 className="m-0"><Badge bg="info" className="mx-2">{count}</Badge></h3>
           <Form.Control
             type="text"
             className="form-control"
