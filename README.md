@@ -6,7 +6,7 @@
   <video src="https://user-images.githubusercontent.com/39777010/224185810-bd5a79eb-ebde-441d-a221-3ae6dea65691.mov" />
 </div>
 
-## Sobre el proyecto
+## About Project
 Mini app to listen musical podcasts
 
 ## Available Scripts
