@@ -13,6 +13,13 @@ Mini app to listen musical podcasts
 
 In the project directory, you can run:
 
+### `Testing App:`
+
+#### `npm run test`
+
+Run unit test
+
+
 ### `Development Mode:`
 
 #### `npm start`
