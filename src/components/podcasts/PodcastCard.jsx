@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 import { Card, Image } from 'react-bootstrap';
 
@@ -34,5 +35,14 @@ const PodcastCard = ({ podcast, navigateBack=false }) => {
     </Card>
   );
 }
+
+PodcastCard.defaultProps = {
+  navigateBack: false,
+};
+
+PodcastCard.propTypes = {
+  podcast: PropTypes.object.isRequired,
+  navigateBack: PropTypes.boolean
+};
 
 export default PodcastCard;
