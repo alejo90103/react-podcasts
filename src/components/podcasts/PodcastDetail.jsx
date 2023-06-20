@@ -8,6 +8,7 @@ import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_DETAIL } from '../../routes/api/paths';
 import PodcastCard from './PodcastCard';
 import useLoadingContext from '../../hooks/useLoadingContext';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const PodcastDetail = () => {
   const location = useLocation();
@@ -41,12 +42,11 @@ const PodcastDetail = () => {
       const podcast = location.state.podcast;
       setPodcast(podcast);
   
-      const data = JSON.parse(localStorage.getItem(`data${podcast.id.attributes["im:id"]}`));
-      if (data && (new Date().getTime() - data.lastRequestDate) < (24 * 60 * 60 * 1000)) {
+      const data = useLocalStorage(`data${podcast.id.attributes["im:id"]}`);
+      if (data) {
         // Use the list stored in the local storage
         setEpisodes(data.episodes);
         setLoading(false);
-        
       } else {
         // Fetch the list from the external service again
         // getPodcastDetail(podcast.id.attributes["im:id"]);

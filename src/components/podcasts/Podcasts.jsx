@@ -5,13 +5,13 @@ import { Container, Card, Row, Col, Image, Form, Badge } from 'react-bootstrap';
 import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_ALL } from '../../routes/api/paths';
 import useLoadingContext from '../../hooks/useLoadingContext';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const Podcasts = () => {
   const navigate = useNavigate();
   const { setLoading } = useLoadingContext();
   const [podcasts, setPodcasts] = useState(null);
   const [originalPodcasts, setOriginalPodcasts] = useState(null);
-  const [count, setCount] = useState(0);
 
   const getPodcasts = () => {
     fetch(PODCAST_API_ALL)
@@ -20,7 +20,6 @@ const Podcasts = () => {
         const podcasts = data.feed.entry;
         setPodcasts(podcasts);
         setOriginalPodcasts(podcasts);
-        setCount(podcasts.length)
         const currentDate = new Date().getTime();
         localStorage.setItem('listData', JSON.stringify({ podcasts, lastRequestDate: currentDate }));
         setLoading(false);
@@ -28,12 +27,11 @@ const Podcasts = () => {
   }
 
   useEffect(() => {
-    const listData = JSON.parse(localStorage.getItem('listData'));
-    if (listData && (new Date().getTime() - listData.lastRequestDate) < (24 * 60 * 60 * 1000)) {
+    const data = useLocalStorage('listData');
+    if (data) {
       // Use the list stored in the local storage
-      setPodcasts(listData.podcasts);
-      setOriginalPodcasts(listData.podcasts);
-      setCount(listData.podcasts.length)
+      setPodcasts(data.podcasts);
+      setOriginalPodcasts(data.podcasts);
       setLoading(false);
     } else {
       // Fetch the list from the external service again
@@ -49,7 +47,6 @@ const Podcasts = () => {
       }
     });
     setPodcasts(filtered);
-    setCount(filtered.length);
   } 
 
   const hadleDetail = (e) => {
@@ -63,7 +60,7 @@ const Podcasts = () => {
     <Container>
       <Row className="mt-2">
         <Col className='p-3 my-4 d-flex justify-content-end'>
-          <h3 className="m-0"><Badge bg="info" className="mx-2">{count}</Badge></h3>
+          <h3 className="m-0"><Badge bg="info" className="mx-2">{podcasts && podcasts.length}</Badge></h3>
           <Form.Control
             type="text"
             className="form-control"

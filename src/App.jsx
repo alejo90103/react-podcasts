@@ -8,10 +8,6 @@ import Layout from './components/layout/Layout';
 import { publicRoutes } from "./routes/app/routes";
 import LoadingContextProvider from "./contexts/loadingContext";
 
-// PODCASTS
-// import Podcasts from './components/podcasts/Podcasts';
-// import PodcastDetail from './components/podcasts/PodcastDetail';
-
 function App() {
   return (
     <ThemeProvider
@@ -23,8 +19,6 @@ function App() {
           <Suspense fallback={true}>
             <Router>
               <Routes>
-                {/* <Route key={1} exact path={"/"} element={<Layout><Podcasts /></Layout>} />
-                <Route key={2} exact path={"/podcast/:id"} element={<Layout><PodcastDetail /></Layout>} /> */}
                 {publicRoutes.map((route, idx) => (
                   <Route key={idx} exact path={route.path} element={<Layout>{route.component}</Layout>} />
                 ))}
