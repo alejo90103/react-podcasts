@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Container, Card, Row, Col, Image, Form, Badge } from 'react-bootstrap';
+import { useErrorBoundary } from "react-error-boundary";
 
 import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_ALL } from '../../routes/api/paths';
@@ -10,6 +11,7 @@ import { Podcast } from '../../models/Podcast';
 
 const Podcasts: React.FC = () => {
   const navigate = useNavigate();
+  const { showBoundary } = useErrorBoundary();
   const { setLoading } = useLoadingContext();
   const [podcasts, setPodcasts] = useState<Podcast[] | null>(null);
   const [originalPodcasts, setOriginalPodcasts] = useState<Podcast[] | null>(null);
@@ -24,6 +26,9 @@ const Podcasts: React.FC = () => {
         const currentDate = new Date().getTime();
         localStorage.setItem('listData', JSON.stringify({ podcasts, lastRequestDate: currentDate }));
         setLoading(false);
+      })
+      .catch((error) => {
+        showBoundary(error);
       });
   }
 
