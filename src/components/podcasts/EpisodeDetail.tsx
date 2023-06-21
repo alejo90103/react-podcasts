@@ -5,11 +5,11 @@ import { Container, Card, Row, Col } from 'react-bootstrap';
 import PodcastCard from './PodcastCard';
 import useLoadingContext from '../../hooks/useLoadingContext';
 
-const EpisodeDetail = () => {
+const EpisodeDetail: React.FC = () => {
   const location = useLocation();
   const { setLoading } = useLoadingContext();
-  const [podcast, setPodcast] = useState(null);
-  const [episode, setEpisode] = useState(null);
+  const [podcast, setPodcast] = useState<any>(null);
+  const [episode, setEpisode] = useState<any>(null);
 
   useEffect(() => {
     if (location.state.podcast && location.state.episode) {

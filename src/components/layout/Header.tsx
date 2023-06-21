@@ -5,7 +5,7 @@ import { Container, Navbar, Spinner } from 'react-bootstrap';
 import { HOME } from '../../routes/app/paths';
 import useLoadingContext from '../../hooks/useLoadingContext';
 
-const Header = () => {
+const Header: React.FC = () => {
   const navigate = useNavigate();
   const { loading } = useLoadingContext();
 
@@ -13,7 +13,7 @@ const Header = () => {
     <Navbar expand="lg" variant="light" bg="light" sticky="top" fixed="top">
       <Container>
         <Navbar.Brand onClick={() => navigate(HOME)} className="text-info cursor-pointer">Podcaster</Navbar.Brand>
-        <Navbar.Collapse className="justify-content-end">
+        <Navbar.Collapse role="" className="justify-content-end">
           { loading && <Spinner animation="grow" variant="info" /> }
         </Navbar.Collapse>
       </Container>

@@ -4,8 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { Card, Image } from 'react-bootstrap';
 
 import { PODCAST } from '../../routes/app/paths';
+import { Podcast } from '../../models/Podcast';
 
-const PodcastCard = ({ podcast, navigateBack=false }) => {
+interface PodcastCardProps {
+  podcast: Podcast;
+  navigateBack?: boolean;
+}
+
+const PodcastCard: React.FC<PodcastCardProps> = ({ podcast, navigateBack=false }) => {
   const navigate = useNavigate();
 
   const handlePodcastDetail = () => {
@@ -38,11 +44,6 @@ const PodcastCard = ({ podcast, navigateBack=false }) => {
 
 PodcastCard.defaultProps = {
   navigateBack: false,
-};
-
-PodcastCard.propTypes = {
-  podcast: PropTypes.object.isRequired,
-  navigateBack: PropTypes.boolean
 };
 
 export default PodcastCard;

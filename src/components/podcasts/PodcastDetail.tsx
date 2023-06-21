@@ -10,15 +10,17 @@ import PodcastCard from './PodcastCard';
 import useLoadingContext from '../../hooks/useLoadingContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
-const PodcastDetail = () => {
+import { Podcast } from '../../models/Podcast';
+import { Episode } from '../../models/Episode';
+
+const PodcastDetail: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { setLoading } = useLoadingContext();
-
-  const [podcast, setPodcast] = useState(null);
-  const [episodes, setEpisodes] = useState(null);
+  const [podcast, setPodcast] = useState<Podcast | null>(null);
+  const [episodes, setEpisodes] = useState<Episode[] | null>(null);
   
-  const getPodcastDetail = (podcastId) => {
+  const getPodcastDetail = (podcastId: string) => {
     fetch(`${PODCAST_API_DETAIL}${podcastId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -39,7 +41,7 @@ const PodcastDetail = () => {
 
   useEffect(() => {
     if (location.state.podcast) {
-      const podcast = location.state.podcast;
+      const podcast = location.state.podcast as Podcast;
       setPodcast(podcast);
   
       const data = useLocalStorage(`data${podcast.id.attributes["im:id"]}`);
@@ -57,45 +59,47 @@ const PodcastDetail = () => {
     }
   }, []);
 
-  const handleEpisodeDetail = (episode) => {
+  const handleEpisodeDetail = (episode: Episode) => {
     setLoading(true);
-    navigate(`${PODCAST}/${podcast.id.attributes["im:id"]}/episode/${episode.guid}`, {
-      state: { 
+    navigate(`${PODCAST}/${podcast?.id.attributes['im:id']}/episode/${episode.guid}`, {
+      state: {
         podcast,
-        episode 
-      }
+        episode,
+      },
     });
-  }
+  };
 
-  const stringifyAttr = (elements) => {
-    let newArray = [];
-    elements.map((e) => {
-      const item = JSON.parse(convert.xml2json(`
-        <?xml version="1.0" encoding="utf-8"?> 
-        ${new XMLSerializer().serializeToString(e)}
-      `));
-      let result = {};
-      item.elements[0].elements.map((d) => {
+  const stringifyAttr = (elements: Element[]): Episode[] => {
+    let newArray: Episode[] = [];
+    elements.forEach((e) => {
+      const item = JSON.parse(
+        convert.xml2json(`
+          <?xml version="1.0" encoding="utf-8"?> 
+          ${new XMLSerializer().serializeToString(e)}
+        `)
+      );
+      let result: Episode = {};
+      item.elements[0].elements.forEach((d) => {
         if (d.elements && d.elements.length > 0 && d.elements[0].type) {
           const element = d.elements[0];
           const type = element.type;
-          (d.name === "title") && (result = { ...result, "title": element[type] });
-          (d.name === "pubDate") && (result = { ...result, "date": element[type] });
-          (d.name === "itunes:duration") && (result = { ...result, "duration": element[type] });
-          (d.name === "description") && (result = { ...result, "description": element[type] });
-          (d.name === "guid") && (result = { ...result, "guid": element[type].replaceAll(":", '').replaceAll("/", '') });
-        } else if (d.name === "enclosure") {
+          if (d.name === 'title') result = { ...result, title: element[type] };
+          if (d.name === 'pubDate') result = { ...result, date: element[type] };
+          if (d.name === 'itunes:duration') result = { ...result, duration: element[type] };
+          if (d.name === 'description') result = { ...result, description: element[type] };
+          if (d.name === 'guid') result = { ...result, guid: element[type].replaceAll(':', '').replaceAll('/', '') };
+        } else if (d.name === 'enclosure') {
           result = {
-            ...result, 
-            "audio": d.attributes.url, 
-            "audioType": d.attributes.type 
-          }
+            ...result,
+            audio: d.attributes.url,
+            audioType: d.attributes.type,
+          };
         }
-      }) 
+      });
       newArray = [...newArray, result];
     });
     return newArray;
-  }
+  };
 
   return (
     <Container>

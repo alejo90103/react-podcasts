@@ -6,12 +6,13 @@ import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_ALL } from '../../routes/api/paths';
 import useLoadingContext from '../../hooks/useLoadingContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import { Podcast } from '../../models/Podcast';
 
-const Podcasts = () => {
+const Podcasts: React.FC = () => {
   const navigate = useNavigate();
   const { setLoading } = useLoadingContext();
-  const [podcasts, setPodcasts] = useState(null);
-  const [originalPodcasts, setOriginalPodcasts] = useState(null);
+  const [podcasts, setPodcasts] = useState<Podcast[] | null>(null);
+  const [originalPodcasts, setOriginalPodcasts] = useState<Podcast[] | null>(null);
 
   const getPodcasts = () => {
     fetch(PODCAST_API_ALL)
@@ -39,7 +40,7 @@ const Podcasts = () => {
     }
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value.toLowerCase();
     const filtered = originalPodcasts.filter(e => {
       if (e["im:name"].label.toLowerCase().includes(search) || e["im:artist"].label.toLowerCase().includes(search)) {
@@ -49,10 +50,10 @@ const Podcasts = () => {
     setPodcasts(filtered);
   } 
 
-  const hadleDetail = (e) => {
+  const hadleDetail = (podcast: Podcast) => {
     setLoading(true);
-    navigate(`${PODCAST}/${e.id.attributes["im:id"]}`, {
-      state: { podcast: e }
+    navigate(`${PODCAST}/${podcast.id.attributes["im:id"]}`, {
+      state: { podcast: podcast }
     });
   }
 
@@ -67,7 +68,7 @@ const Podcasts = () => {
             style={{ width: "20%" }}
             id="search"
             placeholder="Filter podcasts..."
-            onChange={(e) => handleSearch(e)}
+            onChange={handleSearch}
           />
         </Col>
       </Row>

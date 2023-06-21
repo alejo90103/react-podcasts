@@ -8,7 +8,7 @@ import Layout from './components/layout/Layout';
 import { publicRoutes } from "./routes/app/routes";
 import LoadingContextProvider from "./contexts/loadingContext";
 
-function App() {
+const App: React.FC = () => {
   return (
     <ThemeProvider
       breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}
@@ -20,7 +20,7 @@ function App() {
             <Router>
               <Routes>
                 {publicRoutes.map((route, idx) => (
-                  <Route key={idx} exact path={route.path} element={<Layout>{route.component}</Layout>} />
+                  <Route key={idx} path={route.path} element={<Layout>{route.component}</Layout>} />
                 ))}
               </Routes>
             </Router>
