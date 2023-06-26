@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { Container, Card, Row, Col } from 'react-bootstrap';
 
-import PodcastCard from './PodcastCard';
+import PodcastCardDetail from './PodcastCardDetail';
 import useLoadingContext from '../../hooks/useLoadingContext';
 
 const EpisodeDetail: React.FC = () => {
@@ -25,7 +25,7 @@ const EpisodeDetail: React.FC = () => {
         podcast &&
           <Row className="mt-4">
             <Col sm={12} md={4}>
-              <PodcastCard podcast={podcast} navigateBack={true}/>
+              <PodcastCardDetail podcast={podcast} navigateBack={true}/>
             </Col>
             {
               episode ?

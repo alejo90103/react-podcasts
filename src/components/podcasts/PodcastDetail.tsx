@@ -7,7 +7,7 @@ import { useErrorBoundary } from "react-error-boundary";
 
 import { PODCAST } from '../../routes/app/paths';
 import { PODCAST_API_DETAIL } from '../../routes/api/paths';
-import PodcastCard from './PodcastCard';
+import PodcastCardDetail from './PodcastCardDetail';
 import useLoadingContext from '../../hooks/useLoadingContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
@@ -115,7 +115,7 @@ const PodcastDetail: React.FC = () => {
         podcast &&
           <Row className="mt-4">
             <Col sm={12} md={4}>
-              <PodcastCard podcast={podcast} />
+              <PodcastCardDetail podcast={podcast} />
             </Col>
             {
               episodes ?

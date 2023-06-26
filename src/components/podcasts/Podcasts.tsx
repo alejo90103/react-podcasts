@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Container, Card, Row, Col, Image, Form, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Form, Badge } from 'react-bootstrap';
 import { useErrorBoundary } from "react-error-boundary";
 
 import { PODCAST } from '../../routes/app/paths';
@@ -8,6 +8,7 @@ import { PODCAST_API_ALL } from '../../routes/api/paths';
 import useLoadingContext from '../../hooks/useLoadingContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { Podcast } from '../../models/Podcast';
+import PodcastCard from './PodcastCard';
 
 const Podcasts: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Podcasts: React.FC = () => {
   const [podcasts, setPodcasts] = useState<Podcast[] | null>(null);
   const [originalPodcasts, setOriginalPodcasts] = useState<Podcast[] | null>(null);
 
+  // fetch all postcast and storage in localstorage
   const getPodcasts = () => {
     fetch(PODCAST_API_ALL)
       .then((res) => res.json())
@@ -32,19 +34,21 @@ const Podcasts: React.FC = () => {
       });
   }
 
+  // check if podcast exist in storage
   useEffect(() => {
     const data = useLocalStorage('listData');
     if (data) {
-      // Use the list stored in the local storage
+      // use the list stored in the local storage
       setPodcasts(data.podcasts);
       setOriginalPodcasts(data.podcasts);
       setLoading(false);
     } else {
-      // Fetch the list from the external service again
+      // fetch the list from the external service
       getPodcasts();
     }
   }, []);
 
+  // search specific podcast by name or artist
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value.toLowerCase();
     const filtered = originalPodcasts.filter(e => {
@@ -55,7 +59,8 @@ const Podcasts: React.FC = () => {
     setPodcasts(filtered);
   } 
 
-  const hadleDetail = (podcast: Podcast) => {
+  // go to podcast detail view
+  const handleDetail = (podcast: Podcast) => {
     setLoading(true);
     navigate(`${PODCAST}/${podcast.id.attributes["im:id"]}`, {
       state: { podcast: podcast }
@@ -82,21 +87,7 @@ const Podcasts: React.FC = () => {
           podcasts &&
           podcasts.map((e, i) => {
             return (
-              <Col key={i} className='p-3 my-4'>
-                <Card
-                  style={{ minWidth: "18rem" }}
-                  className="mb-2 shadow bg-white rounded text-center border-0 cursor-pointer"
-                  onClick={() => hadleDetail(e)}
-                >
-                  <div className="image-postcast">
-                    <Image roundedCircle src={e["im:image"].length > 0 ? e["im:image"][e["im:image"].length - 1].label : "" } />
-                  </div>
-                  <Card.Body style={{ marginTop: 60 }}>
-                    <Card.Title>{e["im:name"].label}</Card.Title>
-                    <Card.Text className="text-muted">Author: {e["im:artist"].label}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
+              <PodcastCard key={i} podcast={e} handleDetail={handleDetail} />
             );
           })
         }
