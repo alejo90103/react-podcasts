@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 import { useErrorBoundary } from "react-error-boundary";
 
 import { PODCAST } from '../../routes/app/paths';
-import { PODCAST_API_DETAIL } from '../../routes/api/paths';
+import { PODCAST_API_DETAIL, CORS } from '../../routes/api/paths';
 import PodcastCardDetail from './PodcastCardDetail';
 import useLoadingContext from '../../hooks/useLoadingContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
@@ -25,9 +25,7 @@ const PodcastDetail: React.FC = () => {
   
   const getPodcastDetail = (podcastId: string) => {
     const url = `${PODCAST_API_DETAIL}${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
-    // allorigins for cors not working (get 502 error)
-    // fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
-    fetch(`${url}`)
+    fetch(`${CORS}${encodeURIComponent(url)}`)
       .then((res) => res.json())
       .then((data) => {
         fetch(data.results[0].feedUrl)
