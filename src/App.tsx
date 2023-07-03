@@ -26,9 +26,9 @@ const App: React.FC = () => {
             <Suspense fallback={true}>
               <Router>
                 <Routes>
-                  {publicRoutes.map((route, idx) => (
+                  {publicRoutes.map((route) => (
                     <Route 
-                      key={idx} 
+                      key={route.id} 
                       path={route.path} 
                       element={
                         <Layout>

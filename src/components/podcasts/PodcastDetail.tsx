@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Card, Row, Col, Image, Table } from 'react-bootstrap';
+import { Container, Card, Row, Col, Table } from 'react-bootstrap';
 import convert from 'xml-js';
 import Moment from 'react-moment';
 import { useErrorBoundary } from "react-error-boundary";
@@ -21,9 +21,13 @@ const PodcastDetail: React.FC = () => {
   const { setLoading } = useLoadingContext();
   const [podcast, setPodcast] = useState<Podcast | null>(null);
   const [episodes, setEpisodes] = useState<Episode[] | null>(null);
+  const data = useLocalStorage(`data${location.state.podcast.id.attributes["im:id"]}`);
   
   const getPodcastDetail = (podcastId: string) => {
-    fetch(`${PODCAST_API_DETAIL}${podcastId}`)
+    const url = `${PODCAST_API_DETAIL}${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
+    // allorigins for cors not working (get 502 error)
+    // fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+    fetch(`${url}`)
       .then((res) => res.json())
       .then((data) => {
         fetch(data.results[0].feedUrl)
@@ -31,20 +35,14 @@ const PodcastDetail: React.FC = () => {
           .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
           .then(data => {
             const items = data.getElementsByTagName('item');
-            const episodesNodes = Array.from(items).slice(0, 10);
-            const episodes = stringifyAttr(episodesNodes);
+            const episodes = stringifyAttr(Array.from(items).slice(0, 10));
             setEpisodes(episodes);
-            const currentDate = new Date().getTime();
-            localStorage.setItem(`data${podcastId}`, JSON.stringify({ episodes, lastRequestDate: currentDate }));
+            localStorage.setItem(`data${podcastId}`, JSON.stringify({ episodes, lastRequestDate: new Date().getTime() }));
             setLoading(false);
           })
-          .catch((error) => {
-            showBoundary(error);
-          });
+          .catch((error) => { showBoundary(error); });
       })
-      .catch((error) => {
-        showBoundary(error);
-      });
+      .catch((error) => { showBoundary(error); });
   }
 
   useEffect(() => {
@@ -52,7 +50,7 @@ const PodcastDetail: React.FC = () => {
       const podcast = location.state.podcast as Podcast;
       setPodcast(podcast);
   
-      const data = useLocalStorage(`data${podcast.id.attributes["im:id"]}`);
+      // if has storage data
       if (data) {
         // Use the list stored in the local storage
         setEpisodes(data.episodes);

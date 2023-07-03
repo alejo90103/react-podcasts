@@ -16,6 +16,7 @@ const Podcasts: React.FC = () => {
   const { setLoading } = useLoadingContext();
   const [podcasts, setPodcasts] = useState<Podcast[] | null>(null);
   const [originalPodcasts, setOriginalPodcasts] = useState<Podcast[] | null>(null);
+  const data = useLocalStorage('listData');
 
   // fetch all postcast and storage in localstorage
   const getPodcasts = () => {
@@ -36,7 +37,6 @@ const Podcasts: React.FC = () => {
 
   // check if podcast exist in storage
   useEffect(() => {
-    const data = useLocalStorage('listData');
     if (data) {
       // use the list stored in the local storage
       setPodcasts(data.podcasts);
@@ -87,7 +87,9 @@ const Podcasts: React.FC = () => {
           podcasts &&
           podcasts.map((e, i) => {
             return (
-              <PodcastCard key={i} podcast={e} handleDetail={handleDetail} />
+              <Col key={e.id.attributes["im:id"]} className='p-3 my-4'>
+                <PodcastCard podcast={e} handleDetail={handleDetail} />
+              </Col>
             );
           })
         }

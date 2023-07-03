@@ -10,7 +10,7 @@ import PodcastDetail from '../../components/podcasts/PodcastDetail';
 import EpisodeDetail from '../../components/podcasts/EpisodeDetail';
 
 export const publicRoutes = [
-  { path: HOME, component: <Podcasts /> },
-  { path: PODCAST_DETAIL, component: <PodcastDetail /> },
-  { path: EPISODE_DETAIL, component: <EpisodeDetail /> },
+  { id: 1, path: HOME, component: <Podcasts /> },
+  { id: 2, path: PODCAST_DETAIL, component: <PodcastDetail /> },
+  { id: 3, path: EPISODE_DETAIL, component: <EpisodeDetail /> },
 ]
