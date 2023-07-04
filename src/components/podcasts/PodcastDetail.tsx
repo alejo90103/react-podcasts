@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
+import { format, intervalToDuration } from "date-fns";
 import { Container, Card, Row, Col, Table } from 'react-bootstrap';
 import convert from 'xml-js';
 import Moment from 'react-moment';
@@ -10,6 +11,7 @@ import { PODCAST_API_DETAIL, CORS } from '../../routes/api/paths';
 import PodcastCardDetail from './PodcastCardDetail';
 import useLoadingContext from '../../hooks/useLoadingContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import { formatTimeMillis } from '../../utils/utils';
 
 import { Podcast } from '../../models/Podcast';
 import { Episode } from '../../models/Episode';
@@ -28,17 +30,21 @@ const PodcastDetail: React.FC = () => {
     fetch(`${CORS}${encodeURIComponent(url)}`)
       .then((res) => res.json())
       .then((data) => {
-        fetch(data.results[0].feedUrl)
-          .then((res) => res.text())
-          .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-          .then(data => {
-            const items = data.getElementsByTagName('item');
-            const episodes = stringifyAttr(Array.from(items).slice(0, 10));
-            setEpisodes(episodes);
-            localStorage.setItem(`data${podcastId}`, JSON.stringify({ episodes, lastRequestDate: new Date().getTime() }));
-            setLoading(false);
-          })
-          .catch((error) => { showBoundary(error); });
+        const episodes: Episode[] = data.results
+          .filter((e) => e.wrapperType === "podcastEpisode")
+          .map((e) => {
+            return {
+              title: e.trackName,
+              date: e.releaseDate,
+              duration: formatTimeMillis(e.trackTimeMillis),
+              description: e.description,
+              guid: e.episodeGuid,
+              audio: e.episodeUrl,
+              audioType: `${e.episodeContentType}/${e.episodeFileExtension}`,
+            }
+          });
+        setEpisodes(episodes);
+        localStorage.setItem(`data${podcastId}`, JSON.stringify({ episodes, lastRequestDate: new Date().getTime() }));
       })
       .catch((error) => { showBoundary(error); });
   }
@@ -71,37 +77,6 @@ const PodcastDetail: React.FC = () => {
         episode,
       },
     });
-  };
-
-  const stringifyAttr = (elements: Element[]) => {
-    const newArray = elements.map((e) => parseElement(e));
-    return newArray;
-  };
-
-  const parseElement = (element: Element) => {
-    const item = JSON.parse(
-      convert.xml2json(`<?xml version="1.0" encoding="utf-8"?> ${new XMLSerializer().serializeToString(element)}`)
-    );
-    let result: Episode = {};
-    item.elements[0].elements.forEach((d) => {
-      if (d.elements && d.elements.length > 0 && d.elements[0].type) {
-        const element = d.elements[0];
-        const type = element.type;
-        if (d.name === 'title') result = { ...result, title: element[type] };
-        if (d.name === 'pubDate') result = { ...result, date: element[type] };
-        if (d.name === 'itunes:duration') result = { ...result, duration: element[type] };
-        if (d.name === 'description') result = { ...result, description: element[type] };
-        if (d.name === 'guid') result = { ...result, guid: element[type].replaceAll(':', '').replaceAll('/', '') };
-      } else if (d.name === 'enclosure') {
-        result = {
-          ...result,
-          audio: d.attributes.url,
-          audioType: d.attributes.type,
-        };
-      }
-    });
-
-    return result;
   };
 
   return (
