@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Image, Col } from 'react-bootstrap';
+import { Card, Image } from 'react-bootstrap';
 
 import { Podcast } from '../../models/Podcast';
 interface PodcastCardProps {
