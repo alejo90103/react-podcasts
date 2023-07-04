@@ -73,36 +73,35 @@ const PodcastDetail: React.FC = () => {
     });
   };
 
-  const stringifyAttr = (elements: Element[]): Episode[] => {
-    let newArray: Episode[] = [];
-    elements.forEach((e) => {
-      const item = JSON.parse(
-        convert.xml2json(`
-          <?xml version="1.0" encoding="utf-8"?> 
-          ${new XMLSerializer().serializeToString(e)}
-        `)
-      );
-      let result: Episode = {};
-      item.elements[0].elements.forEach((d) => {
-        if (d.elements && d.elements.length > 0 && d.elements[0].type) {
-          const element = d.elements[0];
-          const type = element.type;
-          if (d.name === 'title') result = { ...result, title: element[type] };
-          if (d.name === 'pubDate') result = { ...result, date: element[type] };
-          if (d.name === 'itunes:duration') result = { ...result, duration: element[type] };
-          if (d.name === 'description') result = { ...result, description: element[type] };
-          if (d.name === 'guid') result = { ...result, guid: element[type].replaceAll(':', '').replaceAll('/', '') };
-        } else if (d.name === 'enclosure') {
-          result = {
-            ...result,
-            audio: d.attributes.url,
-            audioType: d.attributes.type,
-          };
-        }
-      });
-      newArray = [...newArray, result];
-    });
+  const stringifyAttr = (elements: Element[]) => {
+    const newArray = elements.map((e) => parseElement(e));
     return newArray;
+  };
+
+  const parseElement = (element: Element) => {
+    const item = JSON.parse(
+      convert.xml2json(`<?xml version="1.0" encoding="utf-8"?> ${new XMLSerializer().serializeToString(element)}`)
+    );
+    let result: Episode = {};
+    item.elements[0].elements.forEach((d) => {
+      if (d.elements && d.elements.length > 0 && d.elements[0].type) {
+        const element = d.elements[0];
+        const type = element.type;
+        if (d.name === 'title') result = { ...result, title: element[type] };
+        if (d.name === 'pubDate') result = { ...result, date: element[type] };
+        if (d.name === 'itunes:duration') result = { ...result, duration: element[type] };
+        if (d.name === 'description') result = { ...result, description: element[type] };
+        if (d.name === 'guid') result = { ...result, guid: element[type].replaceAll(':', '').replaceAll('/', '') };
+      } else if (d.name === 'enclosure') {
+        result = {
+          ...result,
+          audio: d.attributes.url,
+          audioType: d.attributes.type,
+        };
+      }
+    });
+
+    return result;
   };
 
   return (
@@ -133,9 +132,9 @@ const PodcastDetail: React.FC = () => {
                         </thead>
                         <tbody>
                           {
-                            episodes.map((e, i) => {
+                            episodes.map((e) => {
                               return (
-                                <tr key={i} onClick={() => handleEpisodeDetail(e)}>
+                                <tr key={e.guid} onClick={() => handleEpisodeDetail(e)}>
                                   <td className="text-info">{e.title}</td>
                                   <td><Moment date={e.date} format="DD/MM/YYYY" /></td>
                                   <td>{e.duration}</td>

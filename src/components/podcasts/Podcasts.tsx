@@ -71,7 +71,7 @@ const Podcasts: React.FC = () => {
     <Container>
       <Row className="mt-2">
         <Col className='p-3 my-4 d-flex justify-content-end'>
-          <h3 className="m-0"><Badge bg="info" className="mx-2">{podcasts && podcasts.length}</Badge></h3>
+          <h3 className="m-0"><Badge bg="info" className="mx-2">{podcasts?.length}</Badge></h3>
           <Form.Control
             type="text"
             className="form-control"
@@ -84,8 +84,7 @@ const Podcasts: React.FC = () => {
       </Row>
       <Row className="justify-content-md-center mt-4">
         {
-          podcasts &&
-          podcasts.map((e, i) => {
+          podcasts?.map((e, i) => {
             return (
               <Col key={e.id.attributes["im:id"]} className='p-3 my-4'>
                 <PodcastCard podcast={e} handleDetail={handleDetail} />
