@@ -45,6 +45,7 @@ const PodcastDetail: React.FC = () => {
           });
         setEpisodes(episodes);
         localStorage.setItem(`data${podcastId}`, JSON.stringify({ episodes, lastRequestDate: new Date().getTime() }));
+        setLoading(false);
       })
       .catch((error) => { showBoundary(error); });
   }
